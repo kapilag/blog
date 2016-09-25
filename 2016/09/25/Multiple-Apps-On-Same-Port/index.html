@@ -48,7 +48,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/blog/css/style.css">
 
     <!-- Custom Fonts -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -86,7 +86,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Blog</a>
+            <a class="navbar-brand" href="/blog/">Blog</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -94,7 +94,7 @@
             <ul class="nav navbar-nav navbar-right">
                 
                     <li>
-                        <a href="/">
+                        <a href="/blog/">
                             
                                 Home
                             
@@ -102,7 +102,7 @@
                     </li>
                 
                     <li>
-                        <a href="/archives">
+                        <a href="/blog/archives">
                             
                                 Archives
                             
@@ -158,7 +158,7 @@
                         
 
 
-<a href="/tags/networking/">#networking</a>
+<a href="/blog/tags/networking/">#networking</a>
 
 
                     
@@ -183,7 +183,7 @@
 <p>But as you see again from socket question we can run two different TCP and UDP application on same port, the reason for this is in all most all OS implementation port ranges are different for UDP and TCP , that mean 0 -65535 for tcp and 0-65535 for UDP. And every IP connection is defined by socket tuple above which will be unique in this case[DNS uses port 53 for both TCP and UDP]</p>
 <p>One another way of running application on same port is installing different network card or in other words running on different interfaces , which will have different IP addresses assigned to it.(see Socket question again)</p>
 <p>Having said all the above we can conclude that we cannot run two tcp application on same port as Kernel(OS) will not allow this.<br>But Hold on</p>
-<p>I ran two application one Java and other Ruby on the same port and below is the screen shot of the output.<br><img src="/2016/09/25/Multiple-Apps-On-Same-Port/MultipleAppsSamePort.png" alt="multipleapps" title="multipleapps"></p>
+<p>I ran two application one Java and other Ruby on the same port and below is the screen shot of the output.<br><img src="/blog/2016/09/25/Multiple-Apps-On-Same-Port/MultipleAppsSamePort.png" alt="multipleapps" title="multipleapps"></p>
 <p>Now what the heck is this? , all the conclusion is nullified seeing the above output. Both Java and Ruby are listening on the same port ?😵</p>
 <p>However if we give a close look to the screenshot there is IP difference. Webrick/Sinatara is listening on IPv4 range and Jetty on IPv6 range.<br>Hence we are able to have to application bound on same port , there are other explanation also to this using PORT REUSE in socket programming.</p>
 <p>All the above information is based on the reading of some random blogs and stack overflow, This was a rabbit hole for me and above explanation might go wrong in very technical sense but I tried to make it simple and for sure there are some glitches in explanation.<br>Please correct me if something is ambiguous or wrong in it in comments section.</p>
