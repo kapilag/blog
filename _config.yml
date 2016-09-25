@@ -7,7 +7,7 @@ title: Blog
 subtitle:
 description:
 author: Kapil Aggarwal
-language:
+language: en
 timezone:
 
 # URL
@@ -65,6 +65,19 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: clean-blog
 
+# Comments. Choose one by filling up the information
+comments:
+  # Disqus comments
+  disqus_shortname: blog-y9uqnm9nh9
+  # Facebook comments
+  facebook:
+    appid:
+    comment_count: 5
+    comment_colorscheme: light
+
+# Google Analytics Tracking ID
+google_analytics:
+  
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:

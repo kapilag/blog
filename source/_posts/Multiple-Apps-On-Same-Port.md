@@ -1,7 +1,9 @@
 ---
 title: Multiple Apps On Same Port
 date: 2016-09-25 20:15:08
-tags: networking
+tags:
+ - networking
+ - juniordevforlife
 ---
 
 Few day back one of my collegue asked me very basic question, can we run two application on same port.
