@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Multiple Apps On Same Port | Test</title>
+  <meta name="author" content="Kapil Aggarwal">
+  
+  <meta name="description" content="Few day back one of my collegue asked me very basic question, can we run two application on same port.The answer to this question is so obvious for mo">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Multiple Apps On Same Port"/>
+  <meta property="og:site_name" content="Test"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Test" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Test</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+<div class="alignleft" style="margin-top: 15px">
+
+
+</div>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+  
+    <h1 class="title">Multiple Apps On Same Port</h1>
+  
+
+      
+        <p class="published">
+          Published: <time datetime="2016-09-25T14:45:08.000Z">2016-09-25</time>
+        </p>
+      
+    </header>
+    <div class="entry">
+      
+        <p>Few day back one of my collegue asked me very basic question, can we run two application on same port.<br>The answer to this question is so obvious for most of us but actual reasoning why we cannot run two application was somehow missing for me. This led me to search lots of blogs, wikipedia, Stackoverflow, Networking concept and finally whenever everything looks sorted some or other thing came up.</p>
+<p>Before answering this question let refresh some of the concepts(taken from wikipedia)</p>
+<h3 id="What-is-a-Port"><a href="#What-is-a-Port" class="headerlink" title="What is a Port"></a>What is a Port</h3><p>In IP protocol suite , port is end point of communication in operating system. It is a logical construct that identifies specific processes. Port number is a 16-bit unsigned integer ranging from 0 to 65535.</p>
+<h3 id="What-different-Protocols-are-for-interest-over-here"><a href="#What-different-Protocols-are-for-interest-over-here" class="headerlink" title="What different Protocols are for interest over here"></a>What different Protocols are for interest over here</h3><p>UDP and TCP</p>
+<h3 id="What-is-Socket"><a href="#What-is-Socket" class="headerlink" title="What is Socket"></a>What is Socket</h3><p>A network socket is an endpoint of a connection across a computer network. Socket is identified by {SRC-IP, SRC-PORT, DEST-IP, DEST-PORT, PROTOCOL}.<br>Then there is socket API which is provided by OS to bind sockets over ports.</p>
+<h3 id="What-is-“Address-already-in-use-Error”"><a href="#What-is-“Address-already-in-use-Error”" class="headerlink" title="What is “Address already in use Error”"></a>What is “Address already in use Error”</h3><p>When application try to use same port which in bound to some other socket then OS will inform via relevant error code that address was already in use.</p>
+<p>Now back to main question :”Can we use same port for listening?”<br>Functionality of not allowing re-use of same port as we seen above is implemented by Kernel, Reasoning behind such implementation is that if client send packets over network on certain port, then kernel needs to know which application to point to which can serve the request.</p>
+<p>But as you see again from socket question we can run two different TCP and UDP application on same port, the reason for this is in all most all OS implementation port ranges are different for UDP and TCP , that mean 0 -65535 for tcp and 0-65535 for UDP. And every IP connection is defined by socket tuple above which will be unique in this case[DNS uses port 53 for both TCP and UDP]</p>
+<p>One another way of running application on same port is installing different network card or in other words running on different interfaces , which will have different IP addresses assigned to it.(see Socket question again)</p>
+<p>Having said all the above we can conclude that we cannot run two tcp application on same port as Kernel(OS) will not allow this.<br>But Hold on</p>
+<p>I ran two application one Java and other Ruby on the same port and below is the screen shot of the output.<br><img src="/2016/09/25/Multiple-Apps-On-Same-Port/MultipleAppsSamePort.png" alt="multipleapps" title="multipleapps"></p>
+<p>Now what the heck is this? , all the conclusion is nullified seeing the above output. Both Java and Ruby are listening on the same port ?😵</p>
+<p>However if we give a close look to the screenshot there is IP difference. Webrick/Sinatara is listening on IPv4 range and Jetty on IPv6 range.<br>Hence we are able to have to application bound on same port , there are other explanation also to this using PORT REUSE in socket programming.</p>
+<p>All the above information is based on the reading of some random blogs and stack overflow, This was a rabbit hole for me and above explanation might go wrong in very technical sense but I tried to make it simple and for sure there are some glitches in explanation.<br>Please correct me if something is ambiguous or wrong in it in comments section.</p>
+<p>Till then</p>
+<blockquote>
+<p>Stay hungry Stay foolish!.</p>
+</blockquote>
+
+      
+    </div>
+    <footer>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+<!-- hackish -->
+
+  
+</div>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kapil Aggarwal
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
