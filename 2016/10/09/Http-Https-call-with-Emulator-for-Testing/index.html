@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="Many a times while doing mobile testing I(we) always wanted to analyze what all http/https call are happening in the background or may be just to twea">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Kapil Aggarwal">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Http/Https call interception for MobileApps"/>
+    
+
+    <!--Open Graph Description-->
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="Blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+        <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>Http/Https call interception for MobileApps - Blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/blog/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-85418247-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+</head>
+
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/blog/">Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/blog/">
+                            
+                                Home
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/blog/archives">
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="https://github.com/kapilag">
+                            
+                                <i class="fa fa-github fa-stack-2x"></i>
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Http/Https call interception for MobileApps</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                        2016-10-09
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/blog/tags/mobile/">#mobile</a> <a href="/blog/tags/testing/">#testing</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>Many a times while doing mobile testing I(we) always wanted to analyze what all http/https call are happening in the background or may be just to tweak the response a bit to verify some scenarios.</p>
+<p>One example of such use case would be to verify display of name if the length of characters are more than 35 etc.</p>
+<p>Or verify analytics data.</p>
+<p>In my endeavour to reduce manual task of</p>
+<ol>
+<li>Picking up mobile</li>
+<li>Setting proxy on the device(though this can solved using arpspoof but not in scope of this blog)</li>
+<li>Starting zap proxy on my system</li>
+<li>Setting the IP, installing certificate on each device.</li>
+</ol>
+<p>I searched for few suggestion and tools which can perform just the task needed for the moment.</p>
+<p>The exact problem statement which i was trying play around with was mimicking network error on the fly to showcase to a dev a bug.</p>
+<p>if we just want to see what all things are happening behind the scene in mobile then easiest of all is</p>
+<p><strong>Android</strong>:<code>adb logcat</code>.<br><strong>iOS</strong>: Attach console or use <a href="https://github.com/phonegap/ios-sim" target="_blank" rel="external">ios-sim</a>.</p>
+<p>Though logs are pretty straight forward but tweaking or changing response is not possible.<br>And again you need to attach your device to laptop in order to get logs.</p>
+<p>So the best bet at this time was configuring proxy in mobile/emulator.</p>
+<h2 id="Emulator-Simulator-instead-of-Devices"><a href="#Emulator-Simulator-instead-of-Devices" class="headerlink" title="Emulator/Simulator instead of Devices"></a>Emulator/Simulator instead of Devices</h2><p>As we are interested in testing http/s traffic here using real device is too much to ask for, moreover havent encountered any functional anomaly which is present on real device and not able to replicate on emulator/Simulator.</p>
+<p>Difference between simulator and emulator is nicely explained in answer over <a href="http://programmers.stackexchange.com/questions/134746/whats-the-difference-between-simulation-and-emulation" target="_blank" rel="external">here</a>.</p>
+<p>In order to start emu/simulator and using proxy we need to configure one.</p>
+<p> iOS simulator uses the OSX network setting to proxy traffic, so it can be achieved refer <a href="http://blog.daanraman.com/coding/using-the-iphone-simulator-with-an-https-proxy/" target="_blank" rel="external">here</a></p>
+<p> Starting emulator with http-proxy to my surpise was also very simple.<br> <code>emulator -avd Nexus_5_API_22 -http-proxy xx.xxx.xx.xx:8080</code></p>
+<h3 id="Quest-for-Proxy-server"><a href="#Quest-for-Proxy-server" class="headerlink" title="Quest for Proxy server"></a>Quest for Proxy server</h3><p>There are many decent proxy-server available like <a href="https://www.charlesproxy.com/" target="_blank" rel="external">charles proxy</a>. If you like GUI based tools then go for it and it is paid tool.</p>
+<p>Then you have Owasp <a href="https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project" target="_blank" rel="external">ZAP</a> proxy which can used to intercept traffic and is open sourced but yet again it does lot of other things as well(related to security) and as i said before demand of situation was simple easy to use.</p>
+<p><strong>mitmproxy</strong><br>if you haven’t heard of it go checkout there <a href="https://mitmproxy.org/" target="_blank" rel="external">website</a>. Its built with python and one of the brilliant and easy to use commandline tool.</p>
+<p>with mitmproxy, it very easy to edit response/request, save them replay etc and more over ssl certificate installation is pretty smooth.</p>
+<p>mitm by default runs on 8080 port and there are other nice tools which works with mitproxy like mitmdump.</p>
+<h3 id="Certificate-for-https"><a href="#Certificate-for-https" class="headerlink" title="Certificate for https"></a>Certificate for https</h3><p>Now only pending task is installing certificate for intercepting https traffic.  </p>
+<p><strong>With mitm it is as easy as visiting <code>mitm.it</code> and selcting platform.</strong> certificate will be installed automatically.</p>
+<p>For zap proxy installation of certificate is bit tricky with probably following solution.</p>
+<ul>
+<li>Share certificate in email and open the email in emulator/device and download -&gt; install certificate.</li>
+<li>On mac mount the sd card <code>hdid ~/.android/avd/Nexus_5_API_22.avd/sdcard.img</code> and copy the certificate in location of your preference open folder in emulator/device and install certificate.  </li>
+</ul>
+<p>So in order to conclude, clear winner over here is emu/simulator with mitm proxy. Do share your thoughts in the comment section.</p>
+
+
+                
+            </div>
+
+            <!-- Comments -->
+            
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+                </div>
+            
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'blog-y9uqnm9nh9';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+
+</html>
