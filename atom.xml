@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Blog</title>
+  
+  <link href="/blog/atom.xml" rel="self"/>
+  
+  <link href="https://kapilag.github.io/"/>
+  <updated>2016-10-23T14:54:03.000Z</updated>
+  <id>https://kapilag.github.io/</id>
+  
+  <author>
+    <name>Kapil Aggarwal</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Http/Https call with Device using Arp poisoning</title>
+    <link href="https://kapilag.github.io/2016/10/23/Http-Https-call-with-Device-using-Arp-poisoning/"/>
+    <id>https://kapilag.github.io/2016/10/23/Http-Https-call-with-Device-using-Arp-poisoning/</id>
+    <published>2016-10-23T07:49:35.000Z</published>
+    <updated>2016-10-23T14:54:03.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>If you are still not convinced of using Emu/Simulator for monitoring HTTP/S traffic then probably this post will help in debugging network calls from mobile device.</p>
+<p>It will save you from the pain of manually configuring proxy on mobile device and then leave it on for another person to figure out after ~30 min reason of app not working.</p>
+<p>We will be using Arpspoofing techinque to route all the network traffic from victims(mobile) to our machine and then use port forwarding with mitproxy to monitor traffic.</p>
+<p><em>High level steps for configuring above setup is:</em></p>
+<ol>
+<li>Arp poisoning using any tool(ettercap)</li>
+<li>Configure port forwarding and network rules</li>
+<li>Setting up mitmproxy in transparent mode.</li>
+</ol>
+<p><em>Tool used</em></p>
+<ul>
+<li>Ettercap</li>
+<li>Wireshark</li>
+<li>mitmproxy<br><em>OS: OSX el Capitan</em></li>
+</ul>
+<h1 id="Arp-poisoning-spoofing"><a href="#Arp-poisoning-spoofing" class="headerlink" title="Arp poisoning/spoofing"></a><a href="https://en.wikipedia.org/wiki/ARP_spoofing" target="_blank" rel="external">Arp poisoning/spoofing</a></h1><p>Arp poisoning/spoofing is a technique where victim machine is fooled to send all the data to attacker machine by making victim believes gateway is attacker machine and gateway to believe attacker machine is victim.</p>
+<p>There are many tools available to perform this type of attack like arpspoof, ettercap, caine, nemesis etc, But i would be using <a href="https://ettercap.github.io/ettercap/" target="_blank" rel="external">ettercap</a> as part of this post.<br>There are n number of post available to use ettercap, so would not go into details but quick command to start ettercap is<br>Cursor Mode: <code>sudo ettercap -C</code><br>Graphic Mode: <code>sudo ettercap -G</code></p>
+<p>Typical steps in above modes are:</p>
+<ol>
+<li>Scanning host</li>
+<li>Add host to targets</li>
+<li>Start arpoisoning with sniffing option on.</li>
+</ol>
+<p>Other way to start ettercap is in <em>text only -T</em> mode and following command seems to do the trick.<br><code>sudo ettercap -T -w dump -M arp /192.168.0.101/ /192.168.0.1/ output:</code><br>some examples listed <a href="https://linux.die.net/man/8/ettercap" target="_blank" rel="external">here</a></p>
+<p>Once we have ettercap up &amp; running we can now move on to Port forwarding.<br> Meanwhile we can now sniff packets using Wireshark.</p>
+<p><strong>TIP</strong>: If you want to know how exactly arpspoofing work then use <strong>nemesis</strong> tool instead of ettercap.</p>
+<h2 id="Port-forwarding"><a href="#Port-forwarding" class="headerlink" title="Port forwarding"></a><a href="https://en.wikipedia.org/wiki/Port_forwarding" target="_blank" rel="external">Port forwarding</a></h2><p>With arp poisoning we have routed the victim data to our machine but as we are debugging http calls we are interested on in TCP. Wireshark is too verbose for such requirement + we cannot edit &amp; replay responses.</p>
+<p>All the traffic on port 80(http) and port 443 needs to be transferred to port where we will be running mitmproxy(8080).</p>
+<p>Again for port forwarding there are many tutorials but will list few mac command which might be helpful in setting up.<br>In order to enable port forwarding in OSX use.</p>
+<p><code>sudo sysctl -w net.inet.ip.forwarding=1</code>  </p>
+<p>MAC uses <em>pfctl</em> for configuring rules for port forwarding.<br>Best way to configure rule is to create a new file with our configuration.<br><code>sudo touch /etc/pf.anchors/my_config</code>  </p>
+<p>Now lets add rules to the config file.<br><code>rdr on en0 inet proto tcp from any to any port 80 -&gt; 127.0.0.1 port 8080</code><br><code>rdr on en0 inet proto tcp from any to any port 443 -&gt; 127.0.0.1 port 8080</code></p>
+<p>Check if file is valid with <code>sudo pfctl -vnf /etc/pf.anchors/my_config</code><br>Once this is done add entry <code>load anchor &quot;my_config&quot; from &quot;/etc/pf.anchors/my_config&quot;</code> to bottom of the pf.conf file<br><code>sudo vim /etc/pf.conf</code></p>
+<p>Once above steps are done, disable and enable pf using<br>Disable: <code>sudo pfctl -d</code><br>Enable: <code>sudo pfctl -ef /etc/pf.conf</code></p>
+<p><strong>PS</strong>: In order for the new rules to work pf needs to be disabled first on my system , took around 1hr to figure this out :(, hence please do this if something not working as expected.</p>
+<p>Once above setup is configure all the incoming traffic to port 80/443 will be redirected to port 8080.</p>
+<h2 id="Setup-of-mitmproxy-in-transparent-mode"><a href="#Setup-of-mitmproxy-in-transparent-mode" class="headerlink" title="Setup of mitmproxy in transparent mode"></a><a href="http://docs.mitmproxy.org/en/stable/transparent.html" target="_blank" rel="external">Setup of mitmproxy in transparent mode</a></h2><p>I thought this step was optional as was running mitmproxy earlier but again for this as well it took me around 1 hour to figure out that mitmproxy needs to run in transparent mode in order to work with arpspoofing.</p>
+<p>Please follow step by step tutorial over <a href="http://docs.mitmproxy.org/en/stable/transparent.html" target="_blank" rel="external">here</a> for platform specific.<br>Command to run mitmproxy in transparent mode.<br><code>mitmproxy -T --host</code></p>
+<p>Once above setup is done you can see all the http/s traffic of your victim(in our case mobile phone) displayed in mimtproxy console.</p>
+<p>Sweet isnt it ?<br>Do let me know your thoughts in comment section.</p>
+<p><em>Some links:</em><br><a href="https://www.youtube.com/watch?v=yLbKhwnc0HY" target="_blank" rel="external">https://www.youtube.com/watch?v=yLbKhwnc0HY</a><br><a href="https://www.wireshark.org/" target="_blank" rel="external">https://www.wireshark.org/</a><br><a href="https://en.wikipedia.org/wiki/Address_Resolution_Protocol" target="_blank" rel="external">https://en.wikipedia.org/wiki/Address_Resolution_Protocol</a><br><a href="https://en.wikipedia.org/wiki/ARP_spoofing" target="_blank" rel="external">https://en.wikipedia.org/wiki/ARP_spoofing</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;If you are still not convinced of using Emu/Simulator for monitoring HTTP/S traffic then probably this post will help in debugging networ
+    
+    </summary>
+    
+    
+      <category term="testing" scheme="https://kapilag.github.io/tags/testing/"/>
+    
+      <category term="security" scheme="https://kapilag.github.io/tags/security/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Http/Https call interception for MobileApps</title>
+    <link href="https://kapilag.github.io/2016/10/09/Http-Https-call-with-Emulator-for-Testing/"/>
+    <id>https://kapilag.github.io/2016/10/09/Http-Https-call-with-Emulator-for-Testing/</id>
+    <published>2016-10-09T17:31:05.000Z</published>
+    <updated>2016-10-09T06:02:35.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Many a times while doing mobile testing I(we) always wanted to analyze what all http/https call are happening in the background or may be just to tweak the response a bit to verify some scenarios.</p>
+<p>One example of such use case would be to verify display of name if the length of characters are more than 35 etc.</p>
+<p>Or verify analytics data.</p>
+<p>In my endeavour to reduce manual task of</p>
+<ol>
+<li>Picking up mobile</li>
+<li>Setting proxy on the device(though this can solved using arpspoof but not in scope of this blog)</li>
+<li>Starting zap proxy on my system</li>
+<li>Setting the IP, installing certificate on each device.</li>
+</ol>
+<p>I searched for few suggestion and tools which can perform just the task needed for the moment.</p>
+<p>The exact problem statement which i was trying play around with was mimicking network error on the fly to showcase to a dev a bug.</p>
+<p>if we just want to see what all things are happening behind the scene in mobile then easiest of all is</p>
+<p><strong>Android</strong>:<code>adb logcat</code>.<br><strong>iOS</strong>: Attach console or use <a href="https://github.com/phonegap/ios-sim" target="_blank" rel="external">ios-sim</a>.</p>
+<p>Though logs are pretty straight forward but tweaking or changing response is not possible.<br>And again you need to attach your device to laptop in order to get logs.</p>
+<p>So the best bet at this time was configuring proxy in mobile/emulator.</p>
+<h2 id="Emulator-Simulator-instead-of-Devices"><a href="#Emulator-Simulator-instead-of-Devices" class="headerlink" title="Emulator/Simulator instead of Devices"></a>Emulator/Simulator instead of Devices</h2><p>As we are interested in testing http/s traffic here using real device is too much to ask for, moreover havent encountered any functional anomaly which is present on real device and not able to replicate on emulator/Simulator.</p>
+<p>Difference between simulator and emulator is nicely explained in answer over <a href="http://programmers.stackexchange.com/questions/134746/whats-the-difference-between-simulation-and-emulation" target="_blank" rel="external">here</a>.</p>
+<p>In order to start emu/simulator and using proxy we need to configure one.</p>
+<p> iOS simulator uses the OSX network setting to proxy traffic, so it can be achieved refer <a href="http://blog.daanraman.com/coding/using-the-iphone-simulator-with-an-https-proxy/" target="_blank" rel="external">here</a></p>
+<p> Starting emulator with http-proxy to my surpise was also very simple.<br> <code>emulator -avd Nexus_5_API_22 -http-proxy xx.xxx.xx.xx:8080</code></p>
+<h3 id="Quest-for-Proxy-server"><a href="#Quest-for-Proxy-server" class="headerlink" title="Quest for Proxy server"></a>Quest for Proxy server</h3><p>There are many decent proxy-server available like <a href="https://www.charlesproxy.com/" target="_blank" rel="external">charles proxy</a>. If you like GUI based tools then go for it and it is paid tool.</p>
+<p>Then you have Owasp <a href="https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project" target="_blank" rel="external">ZAP</a> proxy which can used to intercept traffic and is open sourced but yet again it does lot of other things as well(related to security) and as i said before demand of situation was simple easy to use.</p>
+<p><strong>mitmproxy</strong><br>if you haven’t heard of it go checkout there <a href="https://mitmproxy.org/" target="_blank" rel="external">website</a>. Its built with python and one of the brilliant and easy to use commandline tool.</p>
+<p>with mitmproxy, it very easy to edit response/request, save them replay etc and more over ssl certificate installation is pretty smooth.</p>
+<p>mitm by default runs on 8080 port and there are other nice tools which works with mitproxy like mitmdump.</p>
+<h3 id="Certificate-for-https"><a href="#Certificate-for-https" class="headerlink" title="Certificate for https"></a>Certificate for https</h3><p>Now only pending task is installing certificate for intercepting https traffic.  </p>
+<p><strong>With mitm it is as easy as visiting <code>mitm.it</code> and selcting platform.</strong> certificate will be installed automatically.</p>
+<p>For zap proxy installation of certificate is bit tricky with probably following solution.</p>
+<ul>
+<li>Share certificate in email and open the email in emulator/device and download -&gt; install certificate.</li>
+<li>On mac mount the sd card <code>hdid ~/.android/avd/Nexus_5_API_22.avd/sdcard.img</code> and copy the certificate in location of your preference open folder in emulator/device and install certificate.  </li>
+</ul>
+<p>So in order to conclude, clear winner over here is emu/simulator with mitm proxy. Do share your thoughts in the comment section.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Many a times while doing mobile testing I(we) always wanted to analyze what all http/https call are happening in the background or may be
+    
+    </summary>
+    
+    
+      <category term="testing" scheme="https://kapilag.github.io/tags/testing/"/>
+    
+      <category term="mobile" scheme="https://kapilag.github.io/tags/mobile/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Multiple Apps On Same Port</title>
+    <link href="https://kapilag.github.io/2016/09/25/Multiple-Apps-On-Same-Port/"/>
+    <id>https://kapilag.github.io/2016/09/25/Multiple-Apps-On-Same-Port/</id>
+    <published>2016-09-25T14:45:08.000Z</published>
+    <updated>2016-09-25T17:07:41.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Few day back one of my collegue asked me very basic question, can we run two application on same port.<br>The answer to this question is so obvious for most of us but actual reasoning why we cannot run two application was somehow missing for me. This led me to search lots of blogs, wikipedia, Stackoverflow, Networking concept and finally whenever everything looks sorted some or other thing came up.</p>
+<p>Before answering this question let refresh some of the concepts(taken from wikipedia)</p>
+<h3 id="What-is-a-Port"><a href="#What-is-a-Port" class="headerlink" title="What is a Port"></a>What is a Port</h3><p>In IP protocol suite , port is end point of communication in operating system. It is a logical construct that identifies specific processes. Port number is a 16-bit unsigned integer ranging from 0 to 65535.</p>
+<h3 id="What-different-Protocols-are-for-interest-over-here"><a href="#What-different-Protocols-are-for-interest-over-here" class="headerlink" title="What different Protocols are for interest over here"></a>What different Protocols are for interest over here</h3><p>UDP and TCP</p>
+<h3 id="What-is-Socket"><a href="#What-is-Socket" class="headerlink" title="What is Socket"></a>What is Socket</h3><p>A network socket is an endpoint of a connection across a computer network. Socket is identified by {SRC-IP, SRC-PORT, DEST-IP, DEST-PORT, PROTOCOL}.<br>Then there is socket API which is provided by OS to bind sockets over ports.</p>
+<h3 id="What-is-“Address-already-in-use-Error”"><a href="#What-is-“Address-already-in-use-Error”" class="headerlink" title="What is “Address already in use Error”"></a>What is “Address already in use Error”</h3><p>When application try to use same port which in bound to some other socket then OS will inform via relevant error code that address was already in use.</p>
+<p>Now back to main question :”Can we use same port for listening?”<br>Functionality of not allowing re-use of same port as we seen above is implemented by Kernel, Reasoning behind such implementation is that if client send packets over network on certain port, then kernel needs to know which application to point to which can serve the request.</p>
+<p>But as you see again from socket question we can run two different TCP and UDP application on same port, the reason for this is in all most all OS implementation port ranges are different for UDP and TCP , that mean 0 -65535 for tcp and 0-65535 for UDP. And every IP connection is defined by socket tuple above which will be unique in this case[DNS uses port 53 for both TCP and UDP]</p>
+<p>One another way of running application on same port is installing different network card or in other words running on different interfaces , which will have different IP addresses assigned to it.(see Socket question again)</p>
+<p>Having said all the above we can conclude that we cannot run two tcp application on same port as Kernel(OS) will not allow this.<br>But Hold on</p>
+<p>I ran two application one Java and other Ruby on the same port and below is the screen shot of the output.<br><img src="/blog/2016/09/25/Multiple-Apps-On-Same-Port/MultipleAppsSamePort.png" alt="multipleapps" title="multipleapps"></p>
+<p>Now what the heck is this? , all the conclusion is nullified seeing the above output. Both Java and Ruby are listening on the same port ?😵</p>
+<p>However if we give a close look to the screenshot there is IP difference. Webrick/Sinatara is listening on IPv4 range and Jetty on IPv6 range.<br>Hence we are able to have to application bound on same port , there are other explanation also to this using PORT REUSE in socket programming.</p>
+<p>All the above information is based on the reading of some random blogs and stack overflow, This was a rabbit hole for me and above explanation might go wrong in very technical sense but I tried to make it simple and for sure there are some glitches in explanation.<br>Please correct me if something is ambiguous or wrong in it in comments section.</p>
+<p>Till then</p>
+<blockquote>
+<p>Stay hungry Stay foolish!.</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Few day back one of my collegue asked me very basic question, can we run two application on same port.&lt;br&gt;The answer to this question is 
+    
+    </summary>
+    
+    
+      <category term="networking" scheme="https://kapilag.github.io/tags/networking/"/>
+    
+      <category term="juniordevforlife" scheme="https://kapilag.github.io/tags/juniordevforlife/"/>
+    
+  </entry>
+  
+</feed>
