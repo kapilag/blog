@@ -65,6 +65,11 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: clean-blog
 
+feed:
+  type: atom
+  path: atom.xml
+  limit: 5
+
 # Comments. Choose one by filling up the information
 comments:
   # Disqus comments

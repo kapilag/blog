@@ -1,6 +1,6 @@
 ---
 title: Http/Https call interception for MobileApps
-date: 2016-09-25 23:01:05
+date: 2016-10-09 23:01:05
 tags:
 - mobile
 - testing
@@ -66,9 +66,9 @@ Now only pending task is installing certificate for intercepting https traffic.
 **With mitm it is as easy as visiting `mitm.it` and selcting platform.** certificate will be installed automatically.
 
 
-For zap proxy then installation of certificate is bit tricky with probably following solution.
-- Share certificate in email and open the email in emaulator and download + install certificate.
-- On mac mount the sd card `hdid ~/.android/avd/Nexus_5_API_22.avd/sdcard.img` and copy the certificate in location of your preference open folder in emulator and install certificate
+For zap proxy installation of certificate is bit tricky with probably following solution.
+- Share certificate in email and open the email in emulator/device and download -> install certificate.
+- On mac mount the sd card `hdid ~/.android/avd/Nexus_5_API_22.avd/sdcard.img` and copy the certificate in location of your preference open folder in emulator/device and install certificate.  
 
 
 So in order to conclude, clear winner over here is emu/simulator with mitm proxy. Do share your thoughts in the comment section.
