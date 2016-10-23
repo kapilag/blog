@@ -83,7 +83,7 @@
     <link href="https://kapilag.github.io/2016/10/09/Http-Https-call-with-Emulator-for-Testing/"/>
     <id>https://kapilag.github.io/2016/10/09/Http-Https-call-with-Emulator-for-Testing/</id>
     <published>2016-10-09T17:31:05.000Z</published>
-    <updated>2016-10-09T06:02:35.000Z</updated>
+    <updated>2016-10-23T15:05:56.000Z</updated>
     
     <content type="html"><![CDATA[<p>Many a times while doing mobile testing I(we) always wanted to analyze what all http/https call are happening in the background or may be just to tweak the response a bit to verify some scenarios.</p>
 <p>One example of such use case would be to verify display of name if the length of characters are more than 35 etc.</p>
@@ -91,7 +91,7 @@
 <p>In my endeavour to reduce manual task of</p>
 <ol>
 <li>Picking up mobile</li>
-<li>Setting proxy on the device(though this can solved using arpspoof but not in scope of this blog)</li>
+<li>Setting proxy on the device(though this can solved using arpspoof but not in scope of this blog) <em>Update: arpspoof blog <a href="https://kapilag.github.io/blog/2016/10/23/Http-Https-call-with-Device-using-Arp-poisoning/">here</a></em></li>
 <li>Starting zap proxy on my system</li>
 <li>Setting the IP, installing certificate on each device.</li>
 </ol>
